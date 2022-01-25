@@ -1,3 +1,8 @@
+mat-form-field {
+    width: 300px; //looks cool on pc and mobile
+}
+
+//#region Flex Layout Example
 #container {
     display: flex;
     width: 90%;
@@ -26,3 +31,4 @@
 #child3 {
     background-color: green;
 }
+//#endregion
