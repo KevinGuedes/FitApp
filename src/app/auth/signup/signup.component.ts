@@ -1,5 +1,6 @@
 import { environment } from './../../../environments/environment';
 import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'fit-signup',
@@ -8,11 +9,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SignupComponent implements OnInit {
 
-  public isStudy: boolean = environment.isStudy;
+  public isStudy: boolean;
 
-  constructor() { }
+  constructor() {
+    this.isStudy = environment.isStudy;
+  }
 
   ngOnInit(): void {
+  }
+
+  onSubmit(signupForm: NgForm) {
+    console.log(signupForm);
   }
 
 }
