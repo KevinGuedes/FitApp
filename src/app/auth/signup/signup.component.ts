@@ -1,3 +1,4 @@
+import { environment } from './../../../environments/environment';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./signup.component.scss']
 })
 export class SignupComponent implements OnInit {
+
+  public isStudy: boolean = environment.isStudy;
 
   constructor() { }
 
