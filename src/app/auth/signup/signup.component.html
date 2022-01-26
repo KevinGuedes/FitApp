@@ -1,5 +1,5 @@
 <section class="signup-form">
-    <form fxLayout="column" fxLayoutAlign="center center" #signupForm="ngForm" (ngSubmit)="onSubmit(signupForm)">
+    <form fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="15px" #signupForm="ngForm" (ngSubmit)="onSubmit(signupForm)">
         <mat-form-field hintLabel="Your email address.">
             <input 
                 type="email" 
@@ -55,7 +55,7 @@
         </mat-checkbox>
         <!-- Checbox doesn't require a mat-form-field wrap -->
 
-        <button type="submit" mat-raised-button color="primary">Submit</button>
+        <button type="submit" mat-raised-button color="primary" [disabled]="signupForm.invalid">Submit</button>
     </form>
 </section>
 
