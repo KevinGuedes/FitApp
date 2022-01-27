@@ -4,3 +4,13 @@ input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
     transition: background-color 50000s ease-in-out 0s;
 }
+
+html,
+body {
+    font-family: "Roboto", sans-serif;
+    height: 100%;
+}
+
+body {
+    margin: 0;
+}
