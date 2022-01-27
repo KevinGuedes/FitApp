@@ -1,53 +1,15 @@
 <mat-sidenav-container>
     <mat-sidenav #sidenav role="navigation">
-        <mat-nav-list>
-            <a mat-list-item routerLink="/signup" (click)="sidenav.close()">
-                <mat-icon>face</mat-icon>
-                <span class="nav-caption">Signup</span>
-            </a>
-            
-            <a mat-list-item routerLink="/login" (click)="sidenav.close()">
-                <mat-icon>input</mat-icon>
-                <span class="nav-caption">Login</span>
-            </a>
-
-            <a mat-list-item routerLink="/training" (click)="sidenav.close()">
-                <mat-icon>fitness_center</mat-icon>
-                <span class="nav-caption">Training</span>
-            </a>
-
-            <mat-list-item>
-                <button mat-icon-button (click)="sidenav.close()">
-                    <mat-icon>eject</mat-icon>
-                    <span class="nav-caption">Logout</span>
-                </button>
-            </mat-list-item>
-        </mat-nav-list>
+        <fit-sidenav-list (closeSidenav)="sidenav.close()"></fit-sidenav-list>
     </mat-sidenav>
 
     <mat-sidenav-content>
-        <mat-toolbar color="primary">
-            <div fxHide.gt-xs>
-            <!--  fxHide.sm fxHide.md fxHide.lg fxHide.xl hide menu button on sm...xl devices = fxHide.gt-xs hide when greater than xs -->
-                <button mat-icon-button (click)="sidenav.toggle()">
-                <mat-icon>menu</mat-icon>
-                </button>
-            </div>
-            <div><a routerLink="/">LOGO</a></div>
-            <!-- <div fxFlex></div> Also solves the problem of moving the links to the end of the toolbar -->
-            <div fxFlex fxLayout fxLayoutAlign="flex-end" fxHide.xs> 
-            <!-- Flex to fill available space, layout row and move to flex end -->
-            <!-- Hidden on eXtra Small deviced -->
-                <ul fxLayout fxLayoutGap="15px" class="navigation-items">
-                    <li><a routerLink="/signup">Signup</a></li>
-                    <li><a routerLink="/login">Login</a></li>
-                    <li><a routerLink="/training">Training</a></li>
-                    <li>Logout</li>
-                </ul>
-            </div>
-        </mat-toolbar> <!-- Toolbar uses flexbox with main axis in row direction -->
+        <fit-header (sidenavToggle)="sidenav.toggle()"></fit-header>
         <main>
             <router-outlet></router-outlet>
         </main>
     </mat-sidenav-content>
 </mat-sidenav-container>
+
+
+<!-- Sidenav Container, Content and Sidenav not recommended to be in different components. The content inside can be other component -->
