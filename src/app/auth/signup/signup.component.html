@@ -12,7 +12,7 @@
                 #emailInput="ngModel">
             <mat-error *ngIf="emailInput.hasError('required')">Field must not be empty.</mat-error>
             <mat-error *ngIf="!emailInput.hasError('required')">Invalid email address.</mat-error>
-            <!-- <mat-error *ngIf="!emailInput.hasError('email')">Invalid email address.</mat-error> -->
+            <!-- <mat-error *ngIf="emailInput.hasError('email')">Invalid email address.</mat-error> -->
             <!-- <mat-error *ngIf="!emailInput.hasError('required')">Invalid email address.</mat-error> If there are any other erros than required and the field stills invalid. Show error only if input is invalid-->
         </mat-form-field>
 
