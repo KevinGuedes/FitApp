@@ -1,11 +1,25 @@
 <section class="new-training" fxLayout fxLayoutAlign="center">
-    <mat-card fxFlex="400px">
-        <mat-card-title>Time To Start A Workout</mat-card-title>
-        <mat-card-content>
-
+    <mat-card fxFlex.xs="100%" fxFlex="400px">
+        <!-- fxLayout below is not required. when fxLayoutAlign is used, row is the default fo fxLayout -->
+        <mat-card-title fxLayout fxLayoutAlign="center">Time To Start A Workout</mat-card-title>
+        <mat-card-content fxLayoutAlign="center">
+            <mat-form-field>
+                <mat-label>Select An Exercise</mat-label>
+                <mat-select required>
+                    <mat-option value="touch-toes">
+                        Touch Toes
+                    </mat-option>
+                    <mat-option value="crunches">
+                        Crunches
+                    </mat-option>
+                    <mat-option value="burpess">
+                        Burpees
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
         </mat-card-content>
-        <mat-card-actions>
-            <button mat-button>Start</button>
+        <mat-card-actions fxLayoutAlign="center">
+            <button mat-stroked-button>Start</button>
         </mat-card-actions>
     </mat-card>
 </section>
