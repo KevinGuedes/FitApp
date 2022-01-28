@@ -7,17 +7,14 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 })
 export class NewTrainingComponent implements OnInit {
 
-  @Output()
-  trainingStart: EventEmitter<void>;
+  @Output() trainingStart: EventEmitter<void> = new EventEmitter<void>();
 
-  constructor() {
-    this.trainingStart = new EventEmitter<void>();
-  }
-
-  ngOnInit(): void {
-  }
+  constructor() { }
 
   public onStartTraining(): void {
     this.trainingStart.emit();
+  }
+
+  ngOnInit(): void {
   }
 }

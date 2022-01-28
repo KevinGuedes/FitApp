@@ -13,5 +13,4 @@ export class AppComponent {
   // public toggleSidenav(): void {
   //   this.sidenav.toggle();
   //  }
-
 }
