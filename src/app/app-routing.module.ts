@@ -18,6 +18,6 @@ const routes: Routes = [
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule],
-    providers: [AuthGuard] //only if not provided in root
+    providers: [AuthGuard] //only if not 'provided in root' on the AuthGuard class
 })
 export class AppRoutingModule { }

@@ -19,6 +19,7 @@ import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.com
 import { StopTrainingComponent } from './training/current-training/stop-training/stop-training.component';
 
 import { AuthService } from './auth/auth-service.service';
+import { TrainingService } from './training/training.service';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,7 @@ import { AuthService } from './auth/auth-service.service';
     FormsModule,
     ReactiveFormsModule,
   ],
-  providers: [AuthService], //Ensure that in the entire app, there is only one instance of AuthService. Just if there is not providedIn root on the service
+  providers: [AuthService, TrainingService], //Ensure that in the entire app, there is only one instance of AuthService. Just if there is not providedIn root on the service
   entryComponents: [StopTrainingComponent], //Because it will be created programmatically (it is a dialog)
   bootstrap: [AppComponent]
 })
