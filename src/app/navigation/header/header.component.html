@@ -20,7 +20,7 @@
             <li *ngIf="!isAuthenticated"><a routerLink="/signup">Signup</a></li>
             <li *ngIf="!isAuthenticated"><a routerLink="/login">Login</a></li>
             <li *ngIf="isAuthenticated"><a routerLink="/training">Training</a></li>
-            <li *ngIf="isAuthenticated">Logout</li>
+            <li *ngIf="isAuthenticated"><a (click)="onLogout()">Logout</a></li>
         </ul>
     </div>
 </mat-toolbar> <!-- Toolbar uses flexbox with main axis in row direction -->
