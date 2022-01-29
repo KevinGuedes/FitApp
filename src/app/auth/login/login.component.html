@@ -6,9 +6,9 @@
                 matInput 
                 placeholder="Email"
                 formControlName="email">
-            <mat-hint>Enter a valid email address.</mat-hint>
+            <mat-hint>Enter you email address.</mat-hint>
             <mat-error *ngIf="loginForm.controls['email'].errors?.['required']">Field must not be empty.</mat-error>
-            <mat-error *ngIf="!loginForm.controls['email'].errors?.['required']">Enter a valid email.</mat-error>
+            <mat-error *ngIf="!loginForm.controls['email'].errors?.['required']">Enter a valid email address.</mat-error>
         </mat-form-field>
 
         <mat-form-field>
