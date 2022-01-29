@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../auth-service.service';
 
 @Component({
   selector: 'fit-login',
@@ -13,11 +14,14 @@ export class LoginComponent implements OnInit {
     password: new FormControl('', { validators: [Validators.required] })
   });
 
-  constructor() {
-  }
+  //Same instance of authService in signup and in login because it was provided in app.module
+  constructor(private authService: AuthService) { }
 
   public onSubmit() {
-    console.log(this.loginForm);
+    this.authService.login({
+      email: this.loginForm.value.email,
+      password: this.loginForm.value.password
+    });
   }
 
   ngOnInit(): void {

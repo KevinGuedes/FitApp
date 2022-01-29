@@ -1,3 +1,4 @@
+import { AuthService } from './../auth-service.service';
 import { environment } from './../../../environments/environment';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
@@ -12,11 +13,14 @@ export class SignupComponent implements OnInit {
   public maxDate: Date = new Date();
   public isStudy: boolean = environment.isStudy;
 
-  constructor() {
+  constructor(private authService: AuthService) {
   }
 
   public onSubmit(signupForm: NgForm) {
-    console.log(signupForm);
+    this.authService.registerUser({
+      email: signupForm.value.email,
+      password: signupForm.value.password
+    });
   }
 
   ngOnInit(): void {

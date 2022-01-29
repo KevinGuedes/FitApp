@@ -17,10 +17,10 @@
         <!-- Flex to fill available space, layout row and move to flex end -->
         <!-- Hidden on eXtra Small deviced -->
         <ul fxLayout fxLayoutGap="15px" class="navigation-items">
-            <li><a routerLink="/signup">Signup</a></li>
-            <li><a routerLink="/login">Login</a></li>
-            <li><a routerLink="/training">Training</a></li>
-            <li>Logout</li>
+            <li *ngIf="!isAuthenticated"><a routerLink="/signup">Signup</a></li>
+            <li *ngIf="!isAuthenticated"><a routerLink="/login">Login</a></li>
+            <li *ngIf="isAuthenticated"><a routerLink="/training">Training</a></li>
+            <li *ngIf="isAuthenticated">Logout</li>
         </ul>
     </div>
 </mat-toolbar> <!-- Toolbar uses flexbox with main axis in row direction -->

@@ -18,6 +18,8 @@ import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import { StopTrainingComponent } from './training/current-training/stop-training/stop-training.component';
 
+import { AuthService } from './auth/auth-service.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -41,8 +43,8 @@ import { StopTrainingComponent } from './training/current-training/stop-training
     FormsModule,
     ReactiveFormsModule,
   ],
-  providers: [],
-  entryComponents: [StopTrainingComponent], //because it will be created programmatically
+  providers: [AuthService], //Ensure that in the entire app, there is only one instance of AuthService
+  entryComponents: [StopTrainingComponent], //Because it will be created programmatically (it is a dialog)
   bootstrap: [AppComponent]
 })
 export class AppModule { }
