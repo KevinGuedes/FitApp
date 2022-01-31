@@ -12,7 +12,7 @@ export class NewTrainingComponent implements OnInit {
 
   public availableExercises!: Exercise[];
 
-  constructor(private trainingService: TrainingService) { }
+  constructor(private readonly trainingService: TrainingService) { }
 
   public onStartTraining(newTrainingForm: NgForm): void {
     this.trainingService.startExercise(newTrainingForm.value.exercise);

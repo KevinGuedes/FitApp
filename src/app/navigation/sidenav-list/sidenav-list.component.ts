@@ -14,7 +14,7 @@ export class SidenavListComponent implements OnInit, OnDestroy {
   public isAuthenticated: boolean = false;
   private authSubscription!: Subscription;
 
-  constructor(private authService: AuthService) {
+  constructor(private readonly authService: AuthService) {
   }
 
   public onClose(): void {

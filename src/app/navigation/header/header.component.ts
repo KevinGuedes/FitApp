@@ -14,7 +14,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public isAuthenticated: boolean = false;
   private authSubscription!: Subscription;
 
-  constructor(private authService: AuthService) { }
+  constructor(private readonly authService: AuthService) { }
 
   public onToggleSidenav(): void {
     this.sidenavToggle.emit();
