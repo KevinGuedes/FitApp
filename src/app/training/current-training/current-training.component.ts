@@ -10,7 +10,6 @@ import { StopTrainingComponent } from './stop-training/stop-training.component';
 })
 export class CurrentTrainingComponent implements OnInit {
 
-  @Output() trainingExit: EventEmitter<void> = new EventEmitter<void>();
   public progress: number = 0;
   public timer: any = 0;
   public keepDefaultMessage: boolean = true;
@@ -27,7 +26,7 @@ export class CurrentTrainingComponent implements OnInit {
     })
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) this.trainingExit.emit();
+      if (result) this.trainingService.cancelExercise(this.progress);
       else {
         this.startOrResumeTimer();
         this.keepDefaultMessage = false;
@@ -45,7 +44,10 @@ export class CurrentTrainingComponent implements OnInit {
     this.timer = setInterval(() => {
       this.progress += 1;
       if (this.progress >= 50) this.keepDefaultMessage = false;
-      if (this.progress >= 100) clearInterval(this.timer);
+      if (this.progress >= 100) {
+        clearInterval(this.timer);
+        this.trainingService.completeExercise();
+      }
     }, step);
   }
 }

@@ -7,9 +7,10 @@ import { Exercise } from './exercise.interface';
 })
 export class TrainingService {
 
-  public exerciseChanged: Subject<Exercise> = new Subject<Exercise>();
+  public exerciseChanged: Subject<Exercise | null> = new Subject<Exercise | null>();
 
   private runningExercise: Exercise | null = null;
+  private exercises: Exercise[] = [];
   private availableExercises: Exercise[] = [
     { id: 'crunches', name: 'Crunches', duration: 30, calories: 8 },
     { id: 'touch-toes', name: 'Touch Toes', duration: 180, calories: 15 },
@@ -33,5 +34,30 @@ export class TrainingService {
 
   public getRunningtExercise(): Exercise | null {
     return this.runningExercise ? { ...this.runningExercise } : null;
+  }
+
+  public completeExercise(): void {
+    this.exercises.push({
+      ...this.runningExercise!,
+      date: new Date(),
+      state: 'completed'
+    });
+
+    this.runningExercise = null;
+    this.exerciseChanged.next(null);
+  }
+
+  public cancelExercise(progress: number,): void {
+    if (this.runningExercise)
+      this.exercises.push({
+        ...this.runningExercise,
+        duration: this.runningExercise.duration * (progress / 100),
+        calories: this.runningExercise.calories * (progress / 100),
+        date: new Date(),
+        state: 'completed'
+      });
+
+    this.runningExercise = null;
+    this.exerciseChanged.next(null);
   }
 }
