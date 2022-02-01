@@ -24,6 +24,14 @@ export class TrainingService {
     return this.availableExercises.slice(); //Creates a copy of the array to avoid modifications in the original available exercises. It is another reference
   }
 
+  public getRunningtExercise(): Exercise | null {
+    return this.runningExercise ? { ...this.runningExercise } : null;
+  }
+
+  public getCompletedOrCancelledExercises(): Exercise[] {
+    return this.exercises.slice();
+  }
+
   public startExercise(exerciseId: string): void {
     const runningExercise = this.availableExercises.find(ex => ex.id === exerciseId);
     if (runningExercise) {
@@ -32,29 +40,28 @@ export class TrainingService {
     }
   }
 
-  public getRunningtExercise(): Exercise | null {
-    return this.runningExercise ? { ...this.runningExercise } : null;
-  }
-
   public completeExercise(): void {
     this.exercises.push({
       ...this.runningExercise!,
       date: new Date(),
-      state: 'completed'
+      state: 'completed',
     });
 
     this.runningExercise = null;
     this.exerciseChanged.next(null);
   }
 
-  public cancelExercise(progress: number,): void {
+  public cancelExercise(progress: number): void {
+
+    const completenessFactor: number = (progress / 100);
+
     if (this.runningExercise)
       this.exercises.push({
         ...this.runningExercise,
-        duration: this.runningExercise.duration * (progress / 100),
-        calories: this.runningExercise.calories * (progress / 100),
+        duration: this.runningExercise.duration * completenessFactor,
+        calories: this.runningExercise.calories * completenessFactor,
         date: new Date(),
-        state: 'completed'
+        state: 'cancelled',
       });
 
     this.runningExercise = null;
