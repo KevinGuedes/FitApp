@@ -12,3 +12,9 @@
         <p>Never stop! Dive into new challenges every day</p>
     </section>
 </div>
+
+<ul>
+    <li *ngFor="let item of item$ | async">
+        {{ item.name }}
+    </li>
+</ul>
