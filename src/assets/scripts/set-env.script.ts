@@ -16,19 +16,19 @@ function writeFileUsingFS(targetPath, environmentFileContent) {
 }
 
 const envDirectory = './src/environments';
-
-if (!existsSync(envDirectory)) {
+if (!existsSync(envDirectory))
     mkdirSync(envDirectory);
-}
-
-writeFileUsingFS('./src/environments/environment.prod.ts', '');
-writeFileUsingFS('./src/environments/environment.ts', '');
 
 const isProduction = environment === 'prod';
-
-const targetPath = isProduction
-    ? './src/environments/environment.prod.ts'
-    : './src/environments/environment.ts';
+let targetPath;
+if (isProduction) {
+    writeFileUsingFS('./src/environments/environment.prod.ts', '');
+    targetPath = './src/environments/environment.prod.ts';
+}
+else {
+    writeFileUsingFS('./src/environments/environment.ts', '');
+    targetPath = './src/environments/environment.ts';
+}
 
 const environmentFileContent = `export const environment = {
     production: ${isProduction},
