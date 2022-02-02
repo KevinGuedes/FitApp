@@ -33,7 +33,7 @@ const targetPath = isProduction
 const environmentFileContent = `export const environment = {
     production: ${isProduction},
     firebase: {
-        projectId: '${process.env["fit-app-64ca6"]}',
+        projectId: '${process.env["FIREBASE_PROJECT_ID"]}',
         appId: '${process.env["FIREBASE_APP_ID"]}',
         storageBucket: '${process.env["FIREBASE_STORAGE_BUCKET"]}',
         locationId: '${process.env["FIREBASE_LOCATION_ID"]}',
