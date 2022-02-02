@@ -11,8 +11,9 @@ const routes: Routes = [
     { path: '', component: WelcomeComponent },
     { path: 'signup', component: SignupComponent },
     { path: 'login', component: LoginComponent },
-    { path: 'training', component: TrainingComponent, canActivate: [AuthGuard] }
+    { path: 'training', component: TrainingComponent, canActivate: [AuthGuard] },
     //canActivate receives an array of classes that implements the CanActivate interface. The canActivate method of them will be executed
+    { path: '**', redirectTo: '' }
 ];
 
 @NgModule({
