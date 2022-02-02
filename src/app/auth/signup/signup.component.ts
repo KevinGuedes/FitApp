@@ -11,7 +11,7 @@ import { NgForm } from '@angular/forms';
 export class SignupComponent implements OnInit {
 
   public maxDate: Date = new Date();
-  public isStudy: boolean = environment.isStudy;
+  public isStudy: boolean = false;
 
   constructor(private authService: AuthService) {
   }
