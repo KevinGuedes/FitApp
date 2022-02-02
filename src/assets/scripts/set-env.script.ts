@@ -10,7 +10,7 @@ function writeFileUsingFS(targetPath, environmentFileContent) {
             console.log(err);
         }
         if (environmentFileContent !== '') {
-            console.log(`Environtment variables wrote in ${targetPath}`);
+            console.log(`Environment variables wrote in ${targetPath}`);
         }
     });
 }
