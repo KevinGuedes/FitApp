@@ -8,12 +8,12 @@ import { Observable } from "rxjs";
     //if not in root. It has to be provided where it will be used (see app-routing.module.ts)
 })
 export class AuthGuard implements CanActivate {
-    constructor(private authService: AuthService, private router: Router) { }
+    constructor(private readonly _authService: AuthService, private readonly _router: Router) { }
 
     canActivate(
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-        if (this.authService.isAuthenticated()) return true
-        else return this.router.navigate(['/login']);
+        if (this._authService.isAuthenticated()) return true
+        else return this._router.navigate(['/login']);
     }
 }

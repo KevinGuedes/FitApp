@@ -18,10 +18,10 @@ export class PastTrainingsComponent implements OnInit, AfterViewInit {
   public displayedColumns: string[] = ['name', 'calories', 'duration', 'state', 'date'];
   public dataSource: MatTableDataSource<Exercise> = new MatTableDataSource<Exercise>();
 
-  constructor(private readonly trainingService: TrainingService) { }
+  constructor(private readonly _trainingService: TrainingService) { }
 
   ngOnInit(): void {
-    this.dataSource.data = this.trainingService.getCompletedOrCancelledExercises();
+    this.dataSource.data = this._trainingService.getCompletedOrCancelledExercises();
   }
 
   ngAfterViewInit() {

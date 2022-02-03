@@ -14,19 +14,19 @@ export class CurrentTrainingComponent implements OnInit {
   public timer: any = 0;
   public keepDefaultMessage: boolean = true;
 
-  constructor(private readonly dialog: MatDialog, private readonly trainingService: TrainingService) { }
+  constructor(private readonly _dialog: MatDialog, private readonly _trainingService: TrainingService) { }
 
   public onStop(): void {
     clearInterval(this.timer);
 
-    const dialogRef = this.dialog.open(StopTrainingComponent, {
+    const dialogRef = this._dialog.open(StopTrainingComponent, {
       data: {
         progress: this.progress,
       }
     })
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) this.trainingService.cancelExercise(this.progress);
+      if (result) this._trainingService.cancelExercise(this.progress);
       else {
         this.startOrResumeTimer();
         this.keepDefaultMessage = false;
@@ -39,14 +39,14 @@ export class CurrentTrainingComponent implements OnInit {
   }
 
   private startOrResumeTimer(): void {
-    const step: number = this.trainingService.getRunningtExercise()!.duration / 100 * 1000;
+    const step: number = this._trainingService.getRunningtExercise()!.duration / 100 * 1000;
 
     this.timer = setInterval(() => {
       this.progress += 1;
       if (this.progress >= 50) this.keepDefaultMessage = false;
       if (this.progress >= 100) {
         clearInterval(this.timer);
-        this.trainingService.completeExercise();
+        this._trainingService.completeExercise();
       }
     }, step);
   }

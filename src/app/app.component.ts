@@ -6,8 +6,8 @@ import { Component, ViewChild } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  private title: string = 'FitApp';
-  private madeBy: string = 'Kevin Guedes';
+  private _title: string = 'FitApp';
+  private _madeBy: string = 'Kevin Guedes';
 
   // @ViewChild('sidenav') sidenav: any;
   // public toggleSidenav(): void {
