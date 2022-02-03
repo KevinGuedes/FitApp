@@ -44,6 +44,7 @@ export class TrainingService {
         this.availableExerciseChanged.next(this._availableExercises.slice()); //copy
       });
 
+    //* The above subscription does not cause memory leak, it replaces itself
     //! could return the observable and use the async pipe where needed. Would also avoid havig problems with non unsubed subscription, memory leak, etc
   }
 
