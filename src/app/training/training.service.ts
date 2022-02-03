@@ -38,13 +38,13 @@ export class TrainingService {
       }
     }
 
-    const availableExercisesCollection = collection(this._firestore, 'availableExercises').withConverter(availableExercisesConverter);
-    collectionData(availableExercisesCollection).subscribe((exercises: Exercise[]) => {
-      this._availableExercises = exercises;
-      this.availableExerciseChanged.next(this._availableExercises.slice()); //copy
-    });
+    collectionData(collection(this._firestore, 'availableExercises').withConverter(availableExercisesConverter))
+      .subscribe((exercises: Exercise[]) => {
+        this._availableExercises = exercises;
+        this.availableExerciseChanged.next(this._availableExercises.slice()); //copy
+      });
 
-    //! could return the observable and use the async pipe where needed
+    //! could return the observable and use the async pipe where needed. Would also avoid havig problems with non unsubed subscription, memory leak, etc
   }
 
   public getRunningtExercise(): Exercise | null {
