@@ -1,46 +1,28 @@
 import { NgForm } from '@angular/forms';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Exercise } from '../exercise.interface';
 import { TrainingService } from '../training.service';
-import { Firestore, collectionData, collection, getDocs } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 
-import { doc, onSnapshot, QueryDocumentSnapshot, SnapshotOptions } from "firebase/firestore";
 @Component({
   selector: 'fit-new-training',
   templateUrl: './new-training.component.html',
   styleUrls: ['./new-training.component.scss']
 })
-export class NewTrainingComponent implements OnInit {
+export class NewTrainingComponent implements OnInit, OnDestroy {
 
-  public availableExercises$!: Observable<Exercise[]>;
+  public availableExercises: Exercise[] = [];
+  private _availableExercisesSubscription!: Subscription;
 
-  constructor(private readonly firestore: Firestore, private readonly trainingService: TrainingService) { }
+  constructor(private readonly _trainingService: TrainingService) { }
 
   public onStartTraining(newTrainingForm: NgForm): void {
-    this.trainingService.startExercise(newTrainingForm.value.exercise);
+    this._trainingService.startExercise(newTrainingForm.value.exercise);
   }
 
   ngOnInit(): void {
-    const cityConverter = {
-      toFirestore: (exercise: Exercise) => {
-        return {
-          name: exercise.name,
-          state: exercise.state,
-
-        };
-      },
-      fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions) => {
-        const data = snapshot.data(options);
-        const id = snapshot.id;
-        return { id, ...data } as Exercise;
-      }
-    }
-
-    const data = collection(this.firestore, 'availableExercises').withConverter(cityConverter);
-    this.availableExercises$ = collectionData(data);
-    this.availableExercises$.subscribe(console.log);
-
+    this._trainingService.fetchAvailableExercises();
+    this._trainingService.availableExerciseChanged.subscribe((exercises: Exercise[]) => this.availableExercises = exercises);
 
     // const querySnapshot = getDocs(data).then(result => {
     //   result.forEach((doc) => {
@@ -58,11 +40,19 @@ export class NewTrainingComponent implements OnInit {
 
     // const unsub = onSnapshot(collection(this.firestore, "availableExercises"), (doc) => {
     //   doc.forEach((doc) => {
-    //     console.log(doc.id, " => ", doc.data());
+    //     console.log(doc.id, " => ", doc.data(), doc.metadata.hasPendingWrites);
+    //   })
+
+    //   doc.docChanges().forEach((change) => {
+    //     console.log(change)
     //   })
     // })
 
     // unsub();
+  }
+
+  ngOnDestroy(): void {
+    this._availableExercisesSubscription.unsubscribe();
   }
 
 }

@@ -1,4 +1,5 @@
-import { Subject } from 'rxjs';
+import { collection, collectionData, Firestore, QueryDocumentSnapshot, SnapshotOptions } from '@angular/fire/firestore';
+import { Observable, Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Exercise } from './exercise.interface';
 
@@ -8,46 +9,68 @@ import { Exercise } from './exercise.interface';
 export class TrainingService {
 
   public exerciseChanged: Subject<Exercise | null> = new Subject<Exercise | null>();
+  public availableExerciseChanged: Subject<Exercise[]> = new Subject<Exercise[]>();
 
-  private runningExercise: Exercise | null = null;
-  private exercises: Exercise[] = [];
-  private availableExercises: Exercise[] = [
-    { id: 'crunches', name: 'Crunches', duration: 30, calories: 8 },
-    { id: 'touch-toes', name: 'Touch Toes', duration: 180, calories: 15 },
-    { id: 'side-lunges', name: 'Side Lunges', duration: 120, calories: 18 },
-    { id: 'burpees', name: 'Burpees', duration: 60, calories: 8 },
-  ]
+  private _runningExercise: Exercise | null = null;
+  private _exercises: Exercise[] = [];
+  private _availableExercises: Exercise[] = [];
 
-  constructor() { }
+  constructor(private readonly _firestore: Firestore) { }
 
-  public getAvailableExercises(): Exercise[] {
-    return this.availableExercises.slice(); //Creates a copy of the array to avoid modifications in the original available exercises. It is another reference
+  public fetchAvailableExercises(): void {
+    const availableExercisesConverter = {
+      toFirestore: (exercise: Exercise) => {
+        return {
+          name: exercise.name,
+          duration: exercise.duration,
+          calories: exercise.calories
+        };
+      },
+      fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions) => {
+        const data = snapshot.data(options);
+
+        return {
+          id: snapshot.id,
+          name: data['name'],
+          duration: data['duration'],
+          calories: data['calories'],
+        };
+      }
+    }
+
+    const availableExercisesCollection = collection(this._firestore, 'availableExercises').withConverter(availableExercisesConverter);
+    collectionData(availableExercisesCollection).subscribe((exercises: Exercise[]) => {
+      this._availableExercises = exercises;
+      this.availableExerciseChanged.next(this._availableExercises.slice()); //copy
+    });
+
+    //! could return the observable and use the async pipe where needed
   }
 
   public getRunningtExercise(): Exercise | null {
-    return this.runningExercise ? { ...this.runningExercise } : null;
+    return this._runningExercise ? { ...this._runningExercise } : null;
   }
 
   public getCompletedOrCancelledExercises(): Exercise[] {
-    return this.exercises.slice();
+    return this._exercises.slice() //Creates a copy of the array to avoid modifications in the original available exercises. It is another reference;
   }
 
   public startExercise(exerciseId: string): void {
-    const runningExercise = this.availableExercises.find(ex => ex.id === exerciseId);
+    const runningExercise = this._availableExercises.find(ex => ex.id === exerciseId);
     if (runningExercise) {
-      this.runningExercise = runningExercise;
-      this.exerciseChanged.next({ ...this.runningExercise });
+      this._runningExercise = runningExercise;
+      this.exerciseChanged.next({ ...this._runningExercise });
     }
   }
 
   public completeExercise(): void {
-    this.exercises.push({
-      ...this.runningExercise!,
+    this._exercises.push({
+      ...this._runningExercise!,
       date: new Date(),
       state: 'completed',
     });
 
-    this.runningExercise = null;
+    this._runningExercise = null;
     this.exerciseChanged.next(null);
   }
 
@@ -55,16 +78,16 @@ export class TrainingService {
 
     const completenessFactor: number = (progress / 100);
 
-    if (this.runningExercise)
-      this.exercises.push({
-        ...this.runningExercise,
-        duration: this.runningExercise.duration * completenessFactor,
-        calories: this.runningExercise.calories * completenessFactor,
+    if (this._runningExercise)
+      this._exercises.push({
+        ...this._runningExercise,
+        duration: this._runningExercise.duration * completenessFactor,
+        calories: this._runningExercise.calories * completenessFactor,
         date: new Date(),
         state: 'cancelled',
       });
 
-    this.runningExercise = null;
+    this._runningExercise = null;
     this.exerciseChanged.next(null);
   }
 }
