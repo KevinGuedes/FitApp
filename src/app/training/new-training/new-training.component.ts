@@ -23,32 +23,6 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._trainingService.fetchAvailableExercises();
     this._availableExercisesSubscription = this._trainingService.availableExerciseChanged.subscribe((exercises: Exercise[]) => this.availableExercises = exercises);
-
-    // const querySnapshot = getDocs(data).then(result => {
-    //   result.forEach((doc) => {
-    //     // doc.data() is never undefined for query doc snapshots
-    //     console.log(doc.id, " => ", doc.data());
-    //   });
-    // });
-
-    // const unsubscribe = onSnapshot(data, (snapshot) => {
-    //   snapshot.docChanges().forEach((change) => {
-    //     console.log(change.doc.id, change.doc.data());
-    //   }
-    //   )
-    // });
-
-    // const unsub = onSnapshot(collection(this.firestore, "availableExercises"), (doc) => {
-    //   doc.forEach((doc) => {
-    //     console.log(doc.id, " => ", doc.data(), doc.metadata.hasPendingWrites);
-    //   })
-
-    //   doc.docChanges().forEach((change) => {
-    //     console.log(change)
-    //   })
-    // })
-
-    // unsub();
   }
 
   ngOnDestroy(): void {

@@ -1,7 +1,10 @@
-import { collection, collectionData, Firestore, QueryDocumentSnapshot, SnapshotOptions } from '@angular/fire/firestore';
-import { Observable, Subject } from 'rxjs';
+import { collection, collectionData, doc, Firestore } from '@angular/fire/firestore';
+import { Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Exercise } from './exercise.interface';
+import { setDoc } from 'firebase/firestore';
+import { environment } from 'src/environments/environment';
+import { finishedExercisesConverter, availableExercisesConverter } from './training.converters';
 
 @Injectable({
   providedIn: 'root'
@@ -10,35 +13,18 @@ export class TrainingService {
 
   public exerciseChanged: Subject<Exercise | null> = new Subject<Exercise | null>();
   public availableExerciseChanged: Subject<Exercise[]> = new Subject<Exercise[]>();
+  public finishedExercisesChanged: Subject<Exercise[]> = new Subject<Exercise[]>();
 
   private _runningExercise: Exercise | null = null;
-  private _exercises: Exercise[] = [];
+  private _finishedExercises: Exercise[] = [];
   private _availableExercises: Exercise[] = [];
+  private _finishedExercisesCollectionName: string = environment.firebase.finishedExercisesCollectionName;
+  private _availableExercisesCollectionName: string = environment.firebase.availableExercisesCollectionName;
 
   constructor(private readonly _firestore: Firestore) { }
 
   public fetchAvailableExercises(): void {
-    const availableExercisesConverter = {
-      toFirestore: (exercise: Exercise) => {
-        return {
-          name: exercise.name,
-          duration: exercise.duration,
-          calories: exercise.calories
-        };
-      },
-      fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions) => {
-        const data = snapshot.data(options);
-
-        return {
-          id: snapshot.id,
-          name: data['name'],
-          duration: data['duration'],
-          calories: data['calories'],
-        };
-      }
-    }
-
-    collectionData(collection(this._firestore, 'availableExercises').withConverter(availableExercisesConverter))
+    collectionData(collection(this._firestore, this._availableExercisesCollectionName).withConverter(availableExercisesConverter))
       .subscribe((exercises: Exercise[]) => {
         this._availableExercises = exercises;
         this.availableExerciseChanged.next(this._availableExercises.slice()); //copy
@@ -52,8 +38,12 @@ export class TrainingService {
     return this._runningExercise ? { ...this._runningExercise } : null;
   }
 
-  public getCompletedOrCancelledExercises(): Exercise[] {
-    return this._exercises.slice() //Creates a copy of the array to avoid modifications in the original available exercises. It is another reference;
+  public fetchCompletedOrCancelledExercises(): void {
+    collectionData(collection(this._firestore, this._finishedExercisesCollectionName).withConverter(finishedExercisesConverter))
+      .subscribe((exercises: Exercise[]) => {
+        this._finishedExercises = exercises;
+        this.finishedExercisesChanged.next(this._finishedExercises.slice());
+      })
   }
 
   public startExercise(exerciseId: string): void {
@@ -65,7 +55,7 @@ export class TrainingService {
   }
 
   public completeExercise(): void {
-    this._exercises.push({
+    this.addExerciseToDatabase({
       ...this._runningExercise!,
       date: new Date(),
       state: 'completed',
@@ -80,7 +70,7 @@ export class TrainingService {
     const completenessFactor: number = (progress / 100);
 
     if (this._runningExercise)
-      this._exercises.push({
+      this.addExerciseToDatabase({
         ...this._runningExercise,
         duration: this._runningExercise.duration * completenessFactor,
         calories: this._runningExercise.calories * completenessFactor,
@@ -91,4 +81,41 @@ export class TrainingService {
     this._runningExercise = null;
     this.exerciseChanged.next(null);
   }
+
+  private addExerciseToDatabase(exercise: Exercise): void {
+    setDoc(doc(collection(this._firestore, this._finishedExercisesCollectionName).withConverter(finishedExercisesConverter)), exercise);
+  }
 }
+
+//#region Study Firebase
+// const querySnapshot = getDocs(data).then(result => {
+    //   result.forEach((doc) => {
+    //     // doc.data() is never undefined for query doc snapshots
+    //     console.log(doc.id, " => ", doc.data());
+    //   });
+    // });
+
+    // const unsubscribe = onSnapshot(data, (snapshot) => {
+    //   snapshot.docChanges().forEach((change) => {
+    //     console.log(change.doc.id, change.doc.data());
+    //   }
+    //   )
+    // });
+
+    // const unsub = onSnapshot(collection(this.firestore, "availableExercises"), (doc) => {
+    //   doc.forEach((doc) => {
+    //     console.log(doc.id, " => ", doc.data(), doc.metadata.hasPendingWrites);
+    //   })
+
+    //   doc.docChanges().forEach((change) => {
+    //     console.log(change)
+    //   })
+    // })
+
+    // unsub();
+    
+    // let x: Observable<Exercise[]> = collectionData(collection(this._firestore, this._availableExercisesCollectionName), {
+    //   idField: 'id'
+    // }) as Observable<Exercise[]>
+    // console.log(x);
+//#endregion

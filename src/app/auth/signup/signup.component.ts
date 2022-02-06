@@ -1,5 +1,4 @@
 import { AuthService } from './../auth-service.service';
-import { environment } from './../../../environments/environment';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
