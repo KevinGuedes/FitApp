@@ -1,8 +1,8 @@
-import { collection, collectionData, doc, Firestore } from '@angular/fire/firestore';
+import { collection, collectionData, doc, Firestore, increment } from '@angular/fire/firestore';
 import { Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Exercise } from './exercise.interface';
-import { setDoc } from 'firebase/firestore';
+import { setDoc, updateDoc } from 'firebase/firestore';
 import { environment } from 'src/environments/environment';
 import { finishedExercisesConverter, availableExercisesConverter } from './training.converters';
 
@@ -47,6 +47,12 @@ export class TrainingService {
   }
 
   public startExercise(exerciseId: string): void {
+    const exerciseRef = doc(this._firestore, this._availableExercisesCollectionName, exerciseId);
+    updateDoc(exerciseRef, {
+      lastSelected: new Date().toUTCString(),
+      selectCount: increment(1),
+    });
+
     const runningExercise = this._availableExercises.find(ex => ex.id === exerciseId);
     if (runningExercise) {
       this._runningExercise = runningExercise;
