@@ -7,7 +7,7 @@ const environment = argv.environment
 function writeFileUsingFS(targetPath, environmentFileContent) {
     writeFile(targetPath, environmentFileContent, function (err) {
         if (err) {
-            console.log(err);
+            console.error(err);
         }
         if (environmentFileContent !== '') {
             console.log(`Environment variables wrote in ${targetPath}`);
@@ -40,6 +40,8 @@ const environmentFileContent = `export const environment = {
         authDomain: '${process.env["FIREBASE_AUTH_DOMAIN"]}',
         messagingSenderId: '${process.env["FIREBASE_MESSAGING_SENDER_ID"]}',
         measurementId: '${process.env["FIREBASE_MEASUREMENT_ID"]}',
+        finishedExercisesCollectionName: '${process.env["FIREBASE_FINISHED_EXERCISES_COLLECTION_NAME"]}',	
+        availableExercisesCollectionName: '${process.env["FIREBASE_AVAILABLE_EXERCISES_COLLECTION_NAME"]}',
     }
 };`;
 
