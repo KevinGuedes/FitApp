@@ -1,6 +1,10 @@
+import { collection, collectionData, doc, Firestore, increment } from '@angular/fire/firestore';
 import { Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Exercise } from './exercise.interface';
+import { setDoc, updateDoc } from 'firebase/firestore';
+import { environment } from 'src/environments/environment';
+import { finishedExercisesConverter, availableExercisesConverter } from './training.converters';
 
 @Injectable({
   providedIn: 'root'
@@ -8,46 +12,62 @@ import { Exercise } from './exercise.interface';
 export class TrainingService {
 
   public exerciseChanged: Subject<Exercise | null> = new Subject<Exercise | null>();
+  public availableExerciseChanged: Subject<Exercise[]> = new Subject<Exercise[]>();
+  public finishedExercisesChanged: Subject<Exercise[]> = new Subject<Exercise[]>();
 
-  private runningExercise: Exercise | null = null;
-  private exercises: Exercise[] = [];
-  private availableExercises: Exercise[] = [
-    { id: 'crunches', name: 'Crunches', duration: 30, calories: 8 },
-    { id: 'touch-toes', name: 'Touch Toes', duration: 180, calories: 15 },
-    { id: 'side-lunges', name: 'Side Lunges', duration: 120, calories: 18 },
-    { id: 'burpees', name: 'Burpees', duration: 60, calories: 8 },
-  ]
+  private _runningExercise: Exercise | null = null;
+  private _finishedExercises: Exercise[] = [];
+  private _availableExercises: Exercise[] = [];
+  private _finishedExercisesCollectionName: string = environment.firebase.finishedExercisesCollectionName;
+  private _availableExercisesCollectionName: string = environment.firebase.availableExercisesCollectionName;
 
-  constructor() { }
+  constructor(private readonly _firestore: Firestore) { }
 
-  public getAvailableExercises(): Exercise[] {
-    return this.availableExercises.slice(); //Creates a copy of the array to avoid modifications in the original available exercises. It is another reference
+  public fetchAvailableExercises(): void {
+    collectionData(collection(this._firestore, this._availableExercisesCollectionName).withConverter(availableExercisesConverter))
+      .subscribe((exercises: Exercise[]) => {
+        this._availableExercises = exercises;
+        this.availableExerciseChanged.next(this._availableExercises.slice()); //copy
+      });
+
+    //* The above subscription does not cause memory leak, it replaces itself
+    //! could return the observable and use the async pipe where needed. Would also avoid havig problems with non unsubed subscription, memory leak, etc
   }
 
   public getRunningtExercise(): Exercise | null {
-    return this.runningExercise ? { ...this.runningExercise } : null;
+    return this._runningExercise ? { ...this._runningExercise } : null;
   }
 
-  public getCompletedOrCancelledExercises(): Exercise[] {
-    return this.exercises.slice();
+  public fetchCompletedOrCancelledExercises(): void {
+    collectionData(collection(this._firestore, this._finishedExercisesCollectionName).withConverter(finishedExercisesConverter))
+      .subscribe((exercises: Exercise[]) => {
+        this._finishedExercises = exercises;
+        this.finishedExercisesChanged.next(this._finishedExercises.slice());
+      })
   }
 
   public startExercise(exerciseId: string): void {
-    const runningExercise = this.availableExercises.find(ex => ex.id === exerciseId);
+    const exerciseRef = doc(this._firestore, this._availableExercisesCollectionName, exerciseId);
+    updateDoc(exerciseRef, {
+      lastSelected: new Date().toUTCString(),
+      selectCount: increment(1),
+    });
+
+    const runningExercise = this._availableExercises.find(ex => ex.id === exerciseId);
     if (runningExercise) {
-      this.runningExercise = runningExercise;
-      this.exerciseChanged.next({ ...this.runningExercise });
+      this._runningExercise = runningExercise;
+      this.exerciseChanged.next({ ...this._runningExercise });
     }
   }
 
   public completeExercise(): void {
-    this.exercises.push({
-      ...this.runningExercise!,
+    this.addExerciseToDatabase({
+      ...this._runningExercise!,
       date: new Date(),
       state: 'completed',
     });
 
-    this.runningExercise = null;
+    this._runningExercise = null;
     this.exerciseChanged.next(null);
   }
 
@@ -55,16 +75,53 @@ export class TrainingService {
 
     const completenessFactor: number = (progress / 100);
 
-    if (this.runningExercise)
-      this.exercises.push({
-        ...this.runningExercise,
-        duration: this.runningExercise.duration * completenessFactor,
-        calories: this.runningExercise.calories * completenessFactor,
+    if (this._runningExercise)
+      this.addExerciseToDatabase({
+        ...this._runningExercise,
+        duration: this._runningExercise.duration * completenessFactor,
+        calories: this._runningExercise.calories * completenessFactor,
         date: new Date(),
         state: 'cancelled',
       });
 
-    this.runningExercise = null;
+    this._runningExercise = null;
     this.exerciseChanged.next(null);
   }
+
+  private addExerciseToDatabase(exercise: Exercise): void {
+    setDoc(doc(collection(this._firestore, this._finishedExercisesCollectionName).withConverter(finishedExercisesConverter)), exercise);
+  }
 }
+
+//#region Study Firebase
+// const querySnapshot = getDocs(data).then(result => {
+    //   result.forEach((doc) => {
+    //     // doc.data() is never undefined for query doc snapshots
+    //     console.log(doc.id, " => ", doc.data());
+    //   });
+    // });
+
+    // const unsubscribe = onSnapshot(data, (snapshot) => {
+    //   snapshot.docChanges().forEach((change) => {
+    //     console.log(change.doc.id, change.doc.data());
+    //   }
+    //   )
+    // });
+
+    // const unsub = onSnapshot(collection(this.firestore, "availableExercises"), (doc) => {
+    //   doc.forEach((doc) => {
+    //     console.log(doc.id, " => ", doc.data(), doc.metadata.hasPendingWrites);
+    //   })
+
+    //   doc.docChanges().forEach((change) => {
+    //     console.log(change)
+    //   })
+    // })
+
+    // unsub();
+    
+    // let x: Observable<Exercise[]> = collectionData(collection(this._firestore, this._availableExercisesCollectionName), {
+    //   idField: 'id'
+    // }) as Observable<Exercise[]>
+    // console.log(x);
+//#endregion

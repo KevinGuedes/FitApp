@@ -10,12 +10,12 @@ import { Router } from '@angular/router';
 export class AuthService {
 
   public authChange: Subject<boolean> = new Subject<boolean>();
-  private user: User | null = null;
+  private _user: User | null = null;
 
   constructor(private router: Router) { }
 
   public registerUser(authData: AuthData): void {
-    this.user = {
+    this._user = {
       email: authData.email,
       id: Math.round(Math.random() * 10000).toString()
     };
@@ -24,7 +24,7 @@ export class AuthService {
   }
 
   public login(authData: AuthData): void {
-    this.user = {
+    this._user = {
       email: authData.email,
       id: Math.round(Math.random() * 10000).toString()
     };
@@ -33,17 +33,17 @@ export class AuthService {
   }
 
   public logout(): void {
-    this.user = null;
+    this._user = null;
     this.authChange.next(false);
     this.router.navigate(['/login']);
   }
 
   public getUser(): User | null {
-    return this.user ? { ... this.user } : null; //return the user with a differente reference, so that the original user is not modified
+    return this._user ? { ... this._user } : null; //return the user with a differente reference, so that the original user is not modified
   }
 
   public isAuthenticated(): boolean {
-    return this.user != null;
+    return this._user != null;
   }
 
   private authSuccessfully(): void {

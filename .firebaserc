@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "fit-app-64ca6": {
+      "hosting": {
+        "FitApp": [
+          "fit-app-64ca6"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "fit-app-64ca6"
+  }
+}

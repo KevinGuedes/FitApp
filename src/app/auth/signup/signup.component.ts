@@ -1,5 +1,4 @@
 import { AuthService } from './../auth-service.service';
-import { environment } from './../../../environments/environment';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
@@ -11,13 +10,13 @@ import { NgForm } from '@angular/forms';
 export class SignupComponent implements OnInit {
 
   public maxDate: Date = new Date();
-  public isStudy: boolean = environment.isStudy;
+  public isStudy: boolean = false;
 
-  constructor(private authService: AuthService) {
+  constructor(private readonly _authService: AuthService) {
   }
 
   public onSubmit(signupForm: NgForm) {
-    this.authService.registerUser({
+    this._authService.registerUser({
       email: signupForm.value.email,
       password: signupForm.value.password
     });

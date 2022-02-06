@@ -15,10 +15,10 @@ export class LoginComponent implements OnInit {
   });
 
   //Same instance of authService in signup and in login because it was provided in app.module
-  constructor(private authService: AuthService) { }
+  constructor(private readonly _authService: AuthService) { }
 
   public onSubmit() {
-    this.authService.login({
+    this._authService.login({
       email: this.loginForm.value.email,
       password: this.loginForm.value.password
     });

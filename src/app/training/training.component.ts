@@ -10,15 +10,15 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 export class TrainingComponent implements OnInit, OnDestroy {
 
   public ongoingTraining: boolean = false;
-  private exerciseSubscription!: Subscription;
+  private _exerciseSubscription!: Subscription;
 
-  constructor(private readonly trainingService: TrainingService) { }
+  constructor(private readonly _trainingService: TrainingService) { }
 
   ngOnInit(): void {
-    this.exerciseSubscription = this.trainingService.exerciseChanged.subscribe(exercise => this.ongoingTraining = Boolean(exercise));
+    this._exerciseSubscription = this._trainingService.exerciseChanged.subscribe(exercise => this.ongoingTraining = Boolean(exercise));
   }
 
   ngOnDestroy(): void {
-    this.exerciseSubscription.unsubscribe();
+    this._exerciseSubscription.unsubscribe();
   }
 }

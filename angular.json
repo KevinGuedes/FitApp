@@ -108,6 +108,16 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "prerender": false,
+            "ssr": false,
+            "browserTarget": "FitApp:build:production",
+            "firebaseProject": "fit-app-64ca6",
+            "firebaseHostingSite": "fit-app-64ca6"
+          }
         }
       }
     }
