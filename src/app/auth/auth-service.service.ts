@@ -3,6 +3,8 @@ import { User } from './user.model';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from '@angular/fire/auth';
+
 
 @Injectable({
   providedIn: 'root' //Visible to all components in the app. With this, it is not necessary to add the service in providers array on app.module.ts
@@ -12,7 +14,7 @@ export class AuthService {
   public authChange: Subject<boolean> = new Subject<boolean>();
   private _user: User | null = null;
 
-  constructor(private router: Router) { }
+  constructor(private readonly _router: Router, private readonly _firebaseAuth: Auth) { }
 
   public registerUser(authData: AuthData): void {
     this._user = {
@@ -20,7 +22,13 @@ export class AuthService {
       id: Math.round(Math.random() * 10000).toString()
     };
 
-    this.authSuccessfully();
+    createUserWithEmailAndPassword(this._firebaseAuth, authData.email, authData.password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user)
+        this.authSuccessfully();
+      })
+      .catch(console.error);
   }
 
   public login(authData: AuthData): void {
@@ -35,7 +43,7 @@ export class AuthService {
   public logout(): void {
     this._user = null;
     this.authChange.next(false);
-    this.router.navigate(['/login']);
+    this._router.navigate(['/login']);
   }
 
   public getUser(): User | null {
@@ -48,6 +56,6 @@ export class AuthService {
 
   private authSuccessfully(): void {
     this.authChange.next(true);
-    this.router.navigate(['/training']);
+    this._router.navigate(['/training']);
   }
 }
