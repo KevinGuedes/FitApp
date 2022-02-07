@@ -1,6 +1,6 @@
 import { TrainingService } from './../training/training.service';
 import { AuthData } from './auth-data.model';
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User } from '@angular/fire/auth';
@@ -16,7 +16,8 @@ export class AuthService {
   constructor(
     private readonly _router: Router,
     private readonly _firebaseAuth: Auth,
-    private readonly _trainingService: TrainingService
+    private readonly _trainingService: TrainingService,
+    private readonly _zone: NgZone,
   ) { }
 
   public initAuthListener(): void {
@@ -24,12 +25,16 @@ export class AuthService {
       if (Boolean(user)) {
         this._isAuthenticated = true;
         this.authChange.next(true);
-        this._router.navigate(['/training']);
+        this._zone.run(() => {
+          this._router.navigate(['/training']);
+        });
       } else {
         this._trainingService.cancelSubscriptions();
         this._isAuthenticated = false;
         this.authChange.next(false);
-        this._router.navigate(['/login']);
+        this._zone.run(() => {
+          this._router.navigate(['/login']);
+        });
       }
     })
   }
