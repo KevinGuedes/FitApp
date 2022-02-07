@@ -8,6 +8,7 @@
                 ngModel 
                 name="email"
                 email
+                pattern="[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
                 required
                 #emailInput="ngModel">
             <mat-error *ngIf="emailInput.hasError('required')">Field must not be empty.</mat-error>

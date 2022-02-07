@@ -1,5 +1,5 @@
 import { collection, collectionData, doc, Firestore, increment } from '@angular/fire/firestore';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Exercise } from './exercise.interface';
 import { setDoc, updateDoc } from 'firebase/firestore';
@@ -20,16 +20,21 @@ export class TrainingService {
   private _availableExercises: Exercise[] = [];
   private _finishedExercisesCollectionName: string = environment.firebase.finishedExercisesCollectionName;
   private _availableExercisesCollectionName: string = environment.firebase.availableExercisesCollectionName;
+  private _firebaseSubscriptions: Subscription[] = [];
 
   constructor(private readonly _firestore: Firestore) { }
 
   public fetchAvailableExercises(): void {
-    collectionData(collection(this._firestore, this._availableExercisesCollectionName).withConverter(availableExercisesConverter))
-      .subscribe((exercises: Exercise[]) => {
-        this._availableExercises = exercises;
-        this.availableExerciseChanged.next(this._availableExercises.slice()); //copy
-      });
-
+    this._firebaseSubscriptions.push(
+      collectionData(collection(this._firestore, this._availableExercisesCollectionName).withConverter(availableExercisesConverter))
+        .subscribe({
+          next: (exercises: Exercise[]) => {
+            this._availableExercises = exercises;
+            this.availableExerciseChanged.next(this._availableExercises.slice()); //copy
+          },
+          error: (error: any) => this.errorHandler(error)
+        })
+    );
     //* The above subscription does not cause memory leak, it replaces itself
     //! could return the observable and use the async pipe where needed. Would also avoid havig problems with non unsubed subscription, memory leak, etc
   }
@@ -39,11 +44,19 @@ export class TrainingService {
   }
 
   public fetchCompletedOrCancelledExercises(): void {
-    collectionData(collection(this._firestore, this._finishedExercisesCollectionName).withConverter(finishedExercisesConverter))
-      .subscribe((exercises: Exercise[]) => {
-        this._finishedExercises = exercises;
-        this.finishedExercisesChanged.next(this._finishedExercises.slice());
-      })
+    this._firebaseSubscriptions.push(
+      collectionData(collection(this._firestore, this._finishedExercisesCollectionName).withConverter(finishedExercisesConverter))
+        .subscribe({
+          next: (exercises: Exercise[]) => {
+            this._finishedExercises = exercises;
+            this.finishedExercisesChanged.next(this._finishedExercises.slice());
+          },
+          error: (error: any) => this.errorHandler(error)
+        })
+    );
+    //! When the user log out, the communication with firestore will throw an error because there is no token to send on the request
+    //! Thats why the subscriptions need to be unsubed
+    //! Basically, when the user log out, the subscriptions well be running
   }
 
   public startExercise(exerciseId: string): void {
@@ -88,8 +101,16 @@ export class TrainingService {
     this.exerciseChanged.next(null);
   }
 
+  public cancelSubscriptions(): void {
+    this._firebaseSubscriptions.forEach(sub => sub.unsubscribe());
+  }
+
   private addExerciseToDatabase(exercise: Exercise): void {
     setDoc(doc(collection(this._firestore, this._finishedExercisesCollectionName).withConverter(finishedExercisesConverter)), exercise);
+  }
+
+  private errorHandler(error: any): void {
+    console.error(error);
   }
 }
 
