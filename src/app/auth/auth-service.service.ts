@@ -54,7 +54,8 @@ export class AuthService {
   }
 
   public logout(): void {
-    this._firebaseAuth.signOut();
+    signOut(this._firebaseAuth);
+    //this._firebaseAuth.signOut();
   }
 
   public isAuthenticated(): boolean {
