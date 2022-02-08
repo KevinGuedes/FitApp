@@ -3,7 +3,7 @@ import { AuthData } from './auth-data.model';
 import { Injectable, NgZone } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, User } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root' //Visible to all components in the app. With this, it is not necessary to add the service in providers array on app.module.ts
@@ -21,7 +21,7 @@ export class AuthService {
   ) { }
 
   public initAuthListener(): void {
-    this._firebaseAuth.onAuthStateChanged((user: User | null) => {
+    onAuthStateChanged(this._firebaseAuth, (user: User | null) => {
       if (Boolean(user)) {
         this._isAuthenticated = true;
         this.authChange.next(true);
