@@ -4,7 +4,7 @@
             <!-- fxLayout below is not required. when fxLayoutAlign is used, row is the default fo fxLayout -->
             <mat-card-title fxLayout fxLayoutAlign="center">Time To Start A Workout</mat-card-title>
             <mat-card-content fxLayoutAlign="center">
-                <mat-form-field>
+                <mat-form-field *ngIf="!isLoading; else spinner">
                     <mat-label>Select An Exercise</mat-label>
                     <mat-select placeholder="Choose an exercise" ngModel name="exercise" required>
                         <mat-option *ngFor="let exercise of availableExercises" [value]="exercise.id">
@@ -12,6 +12,9 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
+                <ng-template #spinner>
+                    <mat-spinner></mat-spinner>
+                </ng-template>
             </mat-card-content>
             <mat-card-actions fxLayoutAlign="center">
                 <button mat-stroked-button [disabled]="newTrainingForm.invalid">Start</button>

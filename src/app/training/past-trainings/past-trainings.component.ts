@@ -5,6 +5,7 @@ import { Exercise } from '../exercise.interface';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
+import { UiService } from 'src/app/shared/ui.service';
 
 @Component({
   selector: 'fit-past-trainings',
@@ -18,11 +19,14 @@ export class PastTrainingsComponent implements OnInit, AfterViewInit, OnDestroy 
 
   public displayedColumns: string[] = ['name', 'calories', 'duration', 'state', 'date'];
   public dataSource: MatTableDataSource<Exercise> = new MatTableDataSource<Exercise>();
+  public isLoading: boolean = true;
   private _finishedExercisesSubscription!: Subscription;
+  private _loadingSubscription!: Subscription;
 
-  constructor(private readonly _trainingService: TrainingService) { }
+  constructor(private readonly _trainingService: TrainingService, private readonly _uiService: UiService) { }
 
   ngOnInit(): void {
+    this._loadingSubscription = this._uiService.loadingStateChanged.subscribe(isLoading => this.isLoading = isLoading);
     this._finishedExercisesSubscription = this._trainingService.finishedExercisesChanged.subscribe((exercises: Exercise[]) => this.dataSource.data = exercises);
     this._trainingService.fetchCompletedOrCancelledExercises();
   }
@@ -34,6 +38,7 @@ export class PastTrainingsComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngOnDestroy() {
     this._finishedExercisesSubscription.unsubscribe();
+    this._loadingSubscription.unsubscribe();
   }
 
   public applyFilter(event: Event) {

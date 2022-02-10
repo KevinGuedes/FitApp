@@ -1,3 +1,4 @@
+import { UiService } from './../shared/ui.service';
 import { collection, collectionData, doc, Firestore, increment } from '@angular/fire/firestore';
 import { Subject, Subscription } from 'rxjs';
 import { Injectable } from '@angular/core';
@@ -22,15 +23,18 @@ export class TrainingService {
   private _availableExercisesCollectionName: string = environment.firebase.availableExercisesCollectionName;
   private _firebaseSubscriptions: Subscription[] = [];
 
-  constructor(private readonly _firestore: Firestore) { }
+  constructor(private readonly _firestore: Firestore, private readonly _uiService: UiService) { }
 
   public fetchAvailableExercises(): void {
+    this._uiService.loadingStateChanged.next(true);
+    
     this._firebaseSubscriptions.push(
       collectionData(collection(this._firestore, this._availableExercisesCollectionName).withConverter(availableExercisesConverter))
         .subscribe({
           next: (exercises: Exercise[]) => {
             this._availableExercises = exercises;
             this.availableExerciseChanged.next(this._availableExercises.slice()); //copy
+            this._uiService.loadingStateChanged.next(false);
           },
           error: (error: any) => this.errorHandler(error)
         })
