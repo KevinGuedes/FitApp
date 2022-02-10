@@ -20,7 +20,6 @@ export class AuthService {
     private readonly _firebaseAuth: Auth,
     private readonly _trainingService: TrainingService,
     private readonly _zone: NgZone,
-    private readonly _snackBar: MatSnackBar,
     private readonly _uiService: UiService,
   ) { }
 
@@ -81,10 +80,6 @@ export class AuthService {
   }
 
   private authErrorHandler(error: any): void {
-    this._snackBar.open(error.message, 'Dismiss', {
-      duration: 3000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-    })
+    this._uiService.showSnackBar(error.message, 'Dismiss', 3);
   }
 }
