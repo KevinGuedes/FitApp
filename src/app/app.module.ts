@@ -15,7 +15,6 @@ import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.com
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { environment } from '../environments/environment';
 import { provideAuth, getAuth } from '@angular/fire/auth';
-import { provideDatabase, getDatabase } from '@angular/fire/database';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 
 import { AuthService } from './auth/auth-service.service';
@@ -38,7 +37,6 @@ import { TrainingService } from './training/training.service';
     TrainingModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
-    provideDatabase(() => getDatabase()),
     provideFirestore(() => getFirestore()),
   ],
   providers: [AuthService, TrainingService], //Ensure that in the entire app, there is only one instance of AuthService. Just if there is not providedIn root on the service
