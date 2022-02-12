@@ -36,7 +36,11 @@ export class TrainingService {
             this.availableExerciseChanged.next(this._availableExercises.slice()); //copy
             this._uiService.loadingStateChanged.next(false);
           },
-          error: (error: any) => this.errorHandler(error)
+          error: (error: any) => { 
+            this.errorHandler(error);
+            this._uiService.loadingStateChanged.next(false);
+            this.availableExerciseChanged.next([]);
+          }
         })
     );
     //* The above subscription does not cause memory leak, it replaces itself
@@ -48,14 +52,21 @@ export class TrainingService {
   }
 
   public fetchCompletedOrCancelledExercises(): void {
+    this._uiService.loadingStateChanged.next(true);
+
     this._firebaseSubscriptions.push(
       collectionData(collection(this._firestore, this._finishedExercisesCollectionName).withConverter(finishedExercisesConverter))
         .subscribe({
           next: (exercises: Exercise[]) => {
             this._finishedExercises = exercises;
             this.finishedExercisesChanged.next(this._finishedExercises.slice());
+            this._uiService.loadingStateChanged.next(false);
           },
-          error: (error: any) => this.errorHandler(error)
+          error: (error: any) => {
+            this.errorHandler(error);
+            this._uiService.loadingStateChanged.next(false);
+            this.finishedExercisesChanged.next([]);
+          }
         })
     );
     //! When the user log out, the communication with firestore will throw an error because there is no token to send on the request
@@ -114,7 +125,7 @@ export class TrainingService {
   }
 
   private errorHandler(error: any): void {
-    console.error(error);
+    this._uiService.showSnackBar(error.message, 'Dismiss', 3);
   }
 }
 

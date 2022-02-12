@@ -20,15 +20,23 @@ export class PastTrainingsComponent implements OnInit, AfterViewInit, OnDestroy 
   public displayedColumns: string[] = ['name', 'calories', 'duration', 'state', 'date'];
   public dataSource: MatTableDataSource<Exercise> = new MatTableDataSource<Exercise>();
   public isLoading: boolean = true;
+  public get isTableDataAvailable(): boolean {
+    return this.dataSource.data.length > 0;
+  }
+
   private _finishedExercisesSubscription!: Subscription;
   private _loadingSubscription!: Subscription;
 
   constructor(private readonly _trainingService: TrainingService, private readonly _uiService: UiService) { }
 
+  public fetchCompletedOrCancelledExercises(): void {
+    this._trainingService.fetchCompletedOrCancelledExercises();
+  }
+
   ngOnInit(): void {
     this._loadingSubscription = this._uiService.loadingStateChanged.subscribe(isLoading => this.isLoading = isLoading);
     this._finishedExercisesSubscription = this._trainingService.finishedExercisesChanged.subscribe((exercises: Exercise[]) => this.dataSource.data = exercises);
-    this._trainingService.fetchCompletedOrCancelledExercises();
+    this.fetchCompletedOrCancelledExercises();
   }
 
   ngAfterViewInit() {

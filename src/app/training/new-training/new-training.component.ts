@@ -14,6 +14,10 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
 
   public availableExercises: Exercise[] = [];
   public isLoading: boolean = true;
+  public get isDropdownAvailable(): boolean {
+    return this.availableExercises.length > 0;
+  }
+
   private _availableExercisesSubscription!: Subscription;
   private _loadingSubscription!: Subscription;
 
@@ -23,10 +27,14 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
     this._trainingService.startExercise(newTrainingForm.value.exercise);
   }
 
+  public fetchAvailableExercises(): void {
+    this._trainingService.fetchAvailableExercises();
+  }
+
   ngOnInit(): void {
     this._loadingSubscription = this._uiService.loadingStateChanged.subscribe(isLoading => this.isLoading = isLoading);
     this._availableExercisesSubscription = this._trainingService.availableExerciseChanged.subscribe((exercises: Exercise[]) => this.availableExercises = exercises);
-    this._trainingService.fetchAvailableExercises();
+    this.fetchAvailableExercises();
   }
 
   ngOnDestroy(): void {

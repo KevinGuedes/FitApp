@@ -1,23 +1,28 @@
 <section class="new-training" fxLayout fxLayoutAlign="center">
     <form (ngSubmit)="onStartTraining(newTrainingForm)" #newTrainingForm="ngForm">
-        <mat-card fxFlex.xs="100%" fxFlex="400px" fxLayout="column" fxLayoutGap="30px">
-            <!-- fxLayout below is not required. when fxLayoutAlign is used, row is the default fo fxLayout -->
-            <mat-card-title fxLayout fxLayoutAlign="center">Time To Start A Workout</mat-card-title>
-            <mat-card-content fxLayoutAlign="center">
-                <mat-form-field *ngIf="!isLoading; else spinner">
-                    <mat-label>Select An Exercise</mat-label>
+        <mat-card fxFlex.xs="100%" fxFlex="400px" fxLayoutGap="30px" fxLayout="column">
+            <!-- fxLayout below is not required. when fxLayoutAlign is used, row is the default of fxLayout -->
+            <mat-card-title fxLayoutAlign="center">Time To Start A Workout</mat-card-title>
+           
+            <mat-card-content fxLayoutAlign="center" *ngIf="!isLoading && isDropdownAvailable">
+                <mat-form-field>
                     <mat-select placeholder="Choose an exercise" ngModel name="exercise" required>
                         <mat-option *ngFor="let exercise of availableExercises" [value]="exercise.id">
                             {{ exercise.name }}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <ng-template #spinner>
-                    <mat-spinner></mat-spinner>
-                </ng-template>
             </mat-card-content>
-            <mat-card-actions fxLayoutAlign="center">
-                <button mat-stroked-button [disabled]="newTrainingForm.invalid">Start</button>
+
+            <div fxLayoutAlign="center" *ngIf="isLoading">
+                <mat-spinner></mat-spinner>
+            </div>
+            
+            <mat-card-actions fxLayoutAlign="center" *ngIf="!isLoading">
+                <button *ngIf="isDropdownAvailable; else fetchAgain" mat-stroked-button [disabled]="newTrainingForm.invalid">Start</button>
+                <ng-template #fetchAgain>
+                    <button type="button" mat-raised-button color="accent" (click)="fetchAvailableExercises()">Fetch Again</button>
+                </ng-template>
             </mat-card-actions>
         </mat-card>
     </form>
