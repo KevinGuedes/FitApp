@@ -4,7 +4,6 @@ import { Injectable, NgZone } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, User } from '@angular/fire/auth';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { UiService } from '../shared/ui.service';
 
 @Injectable({
