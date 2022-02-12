@@ -1,8 +1,5 @@
 import { NgModule } from "@angular/core";
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { MaterialModule } from './../material.module';
-import { FormsModule } from "@angular/forms";
-import { CommonModule } from "@angular/common";
+import { SharedModule } from "../shared/shared.module";
 
 import { TrainingComponent } from './training.component';
 import { CurrentTrainingComponent } from './current-training/current-training.component';
@@ -21,10 +18,7 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
         StopTrainingComponent,
     ],
     imports: [
-        CommonModule, //provides ngIf and so on
-        FormsModule,
-        MaterialModule, //Wont be imported twice (here and in AppModule) because Angular does the module management for us
-        FlexLayoutModule,
+        SharedModule,
         provideFirestore(() => getFirestore()),
     ],
     exports: [],
