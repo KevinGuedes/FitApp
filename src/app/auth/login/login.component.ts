@@ -23,7 +23,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(private readonly _authService: AuthService, private readonly _uiService: UiService) { }
 
   public onSubmit() {
-
     this._authService.login({
       email: this.loginForm.value.email,
       password: this.loginForm.value.password
