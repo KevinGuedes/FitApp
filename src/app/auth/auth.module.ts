@@ -7,6 +7,8 @@ import { SignupComponent } from './signup/signup.component';
 import { LoginComponent } from './login/login.component';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
+import { provideAuth, getAuth } from '@angular/fire/auth';
+
 @NgModule({
     declarations: [
         SignupComponent,
@@ -18,6 +20,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
         ReactiveFormsModule,
         MaterialModule, //Wont be imported twice (here and in AppModule) because Angular does the module management for us
         FlexLayoutModule,
+        provideAuth(() => getAuth()),
     ],
     exports: [],
     //No providers here because thay will be provided in app module and then to the whole application as singleton
