@@ -4,7 +4,9 @@ import { AuthGuard } from '../auth/auth.guard';
 import { TrainingComponent } from './training.component';
 
 const routes: Routes = [
-    { path: '', component: TrainingComponent, canActivate: [AuthGuard] },
+    { path: '', component: TrainingComponent },
+    //Use canActivate here doen´t make sense because the module was downloaded but the user cant use if he is not authenticated.
+
 ];
 
 @NgModule({
