@@ -5,7 +5,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AuthModule } from './auth/auth.module';
-import { TrainingModule } from './training/training.module';
 
 import { AppComponent } from './app.component';
 import { WelcomeComponent } from './welcome/welcome.component';
@@ -14,6 +13,7 @@ import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.com
 
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { environment } from '../environments/environment';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 
 import { AuthService } from './auth/auth-service.service';
 import { TrainingService } from './training/training.service';
@@ -29,11 +29,11 @@ import { TrainingService } from './training/training.service';
     BrowserModule,
     BrowserAnimationsModule,
     MaterialModule,
-    AppRoutingModule,
     FlexLayoutModule,
     AuthModule,
-    TrainingModule,
+    AppRoutingModule, //This must be the last due to the ** wildcard on routes
     provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFirestore(() => getFirestore()),
   ],
   providers: [AuthService, TrainingService], //Ensure that in the entire app, there is only one instance of AuthService. Just if there is not providedIn root on the service
   bootstrap: [AppComponent]

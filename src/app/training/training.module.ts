@@ -1,3 +1,4 @@
+import { TrainingRoutingModule } from './training-routing.module';
 import { NgModule } from "@angular/core";
 import { SharedModule } from "../shared/shared.module";
 
@@ -6,8 +7,6 @@ import { CurrentTrainingComponent } from './current-training/current-training.co
 import { PastTrainingsComponent } from './past-trainings/past-trainings.component';
 import { NewTrainingComponent } from './new-training/new-training.component';
 import { StopTrainingComponent } from './current-training/stop-training/stop-training.component';
-
-import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 
 @NgModule({
     declarations: [
@@ -19,7 +18,7 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
     ],
     imports: [
         SharedModule,
-        provideFirestore(() => getFirestore()),
+        TrainingRoutingModule,
     ],
     exports: [],
     entryComponents: [StopTrainingComponent], //Because it will be created programmatically (it is a dialog)

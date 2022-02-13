@@ -38,8 +38,8 @@ export class TrainingService {
           },
           error: (error: any) => { 
             this.errorHandler(error);
-            this._uiService.loadingStateChanged.next(false);
             this.availableExerciseChanged.next([]);
+            this._uiService.loadingStateChanged.next(false);
           }
         })
     );
@@ -64,8 +64,8 @@ export class TrainingService {
           },
           error: (error: any) => {
             this.errorHandler(error);
-            this._uiService.loadingStateChanged.next(false);
             this.finishedExercisesChanged.next([]);
+            this._uiService.loadingStateChanged.next(false);
           }
         })
     );
@@ -125,6 +125,7 @@ export class TrainingService {
   }
 
   private errorHandler(error: any): void {
+    console.error(error);
     this._uiService.showSnackBar(error.message, 'Dismiss', 3);
   }
 }
