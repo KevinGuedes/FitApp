@@ -1,3 +1,4 @@
+import * as fromApp from './../state/app/app.reducer';
 import { TrainingService } from './../training/training.service';
 import { AuthData } from './auth-data.model';
 import { Injectable, NgZone } from '@angular/core';
@@ -5,6 +6,7 @@ import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, User } from '@angular/fire/auth';
 import { UiService } from '../shared/ui.service';
+import { Store } from '@ngrx/store';
 
 @Injectable({
   providedIn: 'root' //Visible to all components in the app. With this, it is not necessary to add the service in providers array on app.module.ts
@@ -20,6 +22,7 @@ export class AuthService {
     private readonly _trainingService: TrainingService,
     private readonly _zone: NgZone,
     private readonly _uiService: UiService,
+    private readonly _store: Store<fromApp.AppState>,
   ) { }
 
   public initAuthListener(): void {

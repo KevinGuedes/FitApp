@@ -1,3 +1,4 @@
+import { appReducer } from './state/app/app.reducer';
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { MaterialModule } from './material.module';
@@ -5,6 +6,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AuthModule } from './auth/auth.module';
+import { StoreModule } from '@ngrx/store';
 
 import { AppComponent } from './app.component';
 import { WelcomeComponent } from './welcome/welcome.component';
@@ -34,6 +36,7 @@ import { TrainingService } from './training/training.service';
     AppRoutingModule, //This must be the last due to the ** wildcard on routes
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
+    StoreModule.forRoot({ app: appReducer }),
   ],
   providers: [AuthService, TrainingService], //Ensure that in the entire app, there is only one instance of AuthService. Just if there is not providedIn root on the service
   bootstrap: [AppComponent]
