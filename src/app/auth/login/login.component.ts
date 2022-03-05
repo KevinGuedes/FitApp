@@ -1,12 +1,10 @@
 import { Observable } from 'rxjs';
-import { Subscription } from 'rxjs';
-import { UiService } from './../../shared/ui.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../auth-service.service';
 import { Store } from '@ngrx/store';
 import * as fromRoot from '../../state/app/app.reducer';
-import * as uiSelectors from '../../state/ui/ui.selectors';
+import * as fromUiSelectors from '../../state/ui/ui.selectors';
 
 @Component({
   selector: 'fit-login',
@@ -35,6 +33,6 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isLoading$ = this._store.select(uiSelectors.selectIsLoading);
+    this.isLoading$ = this._store.select(fromUiSelectors.selectIsLoading);
   }
 }
