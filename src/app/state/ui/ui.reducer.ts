@@ -18,3 +18,5 @@ export const uiReducer = createReducer(
     //use state here might not be necessary because the state is just the isLoading property
     //so, { isLoading: false } is the complete UiState
 );
+
+export const selectIsLoading = (state: UiState) => state.isLoading
