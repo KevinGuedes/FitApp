@@ -1,4 +1,3 @@
-import * as fromApp from './../state/app/app.reducer';
 import { TrainingService } from './../training/training.service';
 import { AuthData } from './auth-data.model';
 import { Injectable, NgZone } from '@angular/core';
@@ -7,6 +6,8 @@ import { Router } from '@angular/router';
 import { Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, User } from '@angular/fire/auth';
 import { UiService } from '../shared/ui.service';
 import { Store } from '@ngrx/store';
+import * as fromRoot from './../state/app/app.reducer';
+import * as UI from './../state/ui/ui.actions';
 
 @Injectable({
   providedIn: 'root' //Visible to all components in the app. With this, it is not necessary to add the service in providers array on app.module.ts
@@ -22,7 +23,7 @@ export class AuthService {
     private readonly _trainingService: TrainingService,
     private readonly _zone: NgZone,
     private readonly _uiService: UiService,
-    private readonly _store: Store<fromApp.AppState>,
+    private readonly _store: Store<fromRoot.AppState> //AppState merges the feature States with itself
   ) { }
 
   public initAuthListener(): void {
@@ -45,29 +46,29 @@ export class AuthService {
   }
 
   public registerUser(authData: AuthData): void {
-    this._uiService.loadingStateChanged.next(true);
+    this._store.dispatch(UI.startLoading());
 
     createUserWithEmailAndPassword(this._firebaseAuth, authData.email, authData.password)
       .then((_) => {
-        this._uiService.loadingStateChanged.next(false);
+        this._store.dispatch(UI.stopLoading());
       })
       .catch((error: any) => {
-        this._uiService.loadingStateChanged.next(false);
+        this._store.dispatch(UI.stopLoading());
         this.authErrorHandler(error)
       });
   }
 
   public login(authData: AuthData): void {
-    this._uiService.loadingStateChanged.next(true);
+    this._store.dispatch(UI.startLoading());
 
     //* Login and Create User actions adds the user token and other info in the session storage
-    //* The data is send on the request to firestore and that why we can access the database, even with the auth rules configured on the firebase project 
+    //* The data is send on the request to firestore and thats why we can access the database, even with the auth rules configured on the firebase project 
     signInWithEmailAndPassword(this._firebaseAuth, authData.email, authData.password)
       .then((_) => {
-        this._uiService.loadingStateChanged.next(false);
+        this._store.dispatch(UI.stopLoading());
       })
       .catch((error: any) => {
-        this._uiService.loadingStateChanged.next(false);
+        this._store.dispatch(UI.stopLoading());
         this.authErrorHandler(error)
       });
   }

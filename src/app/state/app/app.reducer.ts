@@ -1,13 +1,10 @@
-import { Action, createReducer, on } from '@ngrx/store';
+import { ActionReducerMap } from '@ngrx/store';
+import * as fromUi from '../ui/ui.reducer';
 
 export interface AppState {
-    isLoading: boolean;
+    ui: fromUi.UiState;
 }
 
-export const appInitialState: AppState = {
-    isLoading: false,
+export const appReducers: ActionReducerMap<AppState> = {
+    ui: fromUi.uiReducer,
 }
-
-export const appReducer = createReducer(
-    appInitialState,
-);
