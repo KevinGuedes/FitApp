@@ -16,4 +16,5 @@ export const uiReducer = createReducer(
     on(UiActions.startLoading, _ => ({ isLoading: true })),
     on(UiActions.stopLoading, _ => ({ isLoading: false })),
     //use state here might not be necessary because the state is just the isLoading property
+    //so, { isLoading: false } is the complete UiState
 );
