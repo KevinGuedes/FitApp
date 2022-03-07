@@ -7,7 +7,7 @@ import { Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEma
 import { UiService } from '../shared/ui.service';
 import { Store } from '@ngrx/store';
 import * as fromRoot from './../state/app/app.reducer';
-import * as UI from './../state/ui/ui.actions';
+import * as fromUiActions from './../state/ui/ui.actions';
 
 @Injectable({
   providedIn: 'root' //Visible to all components in the app. With this, it is not necessary to add the service in providers array on app.module.ts
@@ -46,29 +46,29 @@ export class AuthService {
   }
 
   public registerUser(authData: AuthData): void {
-    this._store.dispatch(UI.startLoading());
+    this._store.dispatch(fromUiActions.startLoading());
 
     createUserWithEmailAndPassword(this._firebaseAuth, authData.email, authData.password)
       .then((_) => {
-        this._store.dispatch(UI.stopLoading());
+        this._store.dispatch(fromUiActions.stopLoading());
       })
       .catch((error: any) => {
-        this._store.dispatch(UI.stopLoading());
+        this._store.dispatch(fromUiActions.stopLoading());
         this.authErrorHandler(error)
       });
   }
 
   public login(authData: AuthData): void {
-    this._store.dispatch(UI.startLoading());
+    this._store.dispatch(fromUiActions.startLoading());
 
     //* Login and Create User actions adds the user token and other info in the session storage
     //* The data is send on the request to firestore and thats why we can access the database, even with the auth rules configured on the firebase project 
     signInWithEmailAndPassword(this._firebaseAuth, authData.email, authData.password)
       .then((_) => {
-        this._store.dispatch(UI.stopLoading());
+        this._store.dispatch(fromUiActions.stopLoading());
       })
       .catch((error: any) => {
-        this._store.dispatch(UI.stopLoading());
+        this._store.dispatch(fromUiActions.stopLoading());
         this.authErrorHandler(error)
       });
   }

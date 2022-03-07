@@ -6,6 +6,9 @@ import { Exercise } from './exercise.interface';
 import { setDoc, updateDoc } from 'firebase/firestore';
 import { environment } from 'src/environments/environment';
 import { finishedExercisesConverter, availableExercisesConverter } from './training.converters';
+import { Store } from '@ngrx/store';
+import * as fromRoot from './../state/app/app.reducer';
+import * as fromUiActions from './../state/ui/ui.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -23,10 +26,14 @@ export class TrainingService {
   private _availableExercisesCollectionName: string = environment.firebase.availableExercisesCollectionName;
   private _firebaseSubscriptions: Subscription[] = [];
 
-  constructor(private readonly _firestore: Firestore, private readonly _uiService: UiService) { }
+  constructor(
+    private readonly _firestore: Firestore, 
+    private readonly _uiService: UiService,
+    private readonly _store: Store<fromRoot.AppState>
+  ) { }
 
   public fetchAvailableExercises(): void {
-    this._uiService.loadingStateChanged.next(true);
+    this._store.dispatch(fromUiActions.startLoading());
     
     this._firebaseSubscriptions.push(
       collectionData(collection(this._firestore, this._availableExercisesCollectionName).withConverter(availableExercisesConverter))
@@ -34,12 +41,12 @@ export class TrainingService {
           next: (exercises: Exercise[]) => {
             this._availableExercises = exercises;
             this.availableExerciseChanged.next(this._availableExercises.slice()); //copy
-            this._uiService.loadingStateChanged.next(false);
+            this._store.dispatch(fromUiActions.stopLoading());
           },
           error: (error: any) => { 
             this.errorHandler(error);
             this.availableExerciseChanged.next([]);
-            this._uiService.loadingStateChanged.next(false);
+            this._store.dispatch(fromUiActions.stopLoading());
           }
         })
     );
@@ -52,22 +59,27 @@ export class TrainingService {
   }
 
   public fetchCompletedOrCancelledExercises(): void {
-    this._uiService.loadingStateChanged.next(true);
+    this._store.dispatch(fromUiActions.startLoading());
 
     this._firebaseSubscriptions.push(
-      collectionData(collection(this._firestore, this._finishedExercisesCollectionName).withConverter(finishedExercisesConverter))
-        .subscribe({
+      collectionData(
+        collection(this._firestore, this._finishedExercisesCollectionName)
+        .withConverter(finishedExercisesConverter)
+      )
+      .subscribe(
+        {
           next: (exercises: Exercise[]) => {
             this._finishedExercises = exercises;
             this.finishedExercisesChanged.next(this._finishedExercises.slice());
-            this._uiService.loadingStateChanged.next(false);
+            this._store.dispatch(fromUiActions.stopLoading());
           },
           error: (error: any) => {
             this.errorHandler(error);
             this.finishedExercisesChanged.next([]);
-            this._uiService.loadingStateChanged.next(false);
+            this._store.dispatch(fromUiActions.stopLoading());
           }
-        })
+        }
+      )
     );
     //! When the user log out, the communication with firestore will throw an error because there is no token to send on the request
     //! Thats why the subscriptions need to be unsubed

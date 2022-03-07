@@ -14,7 +14,10 @@ export class CurrentTrainingComponent implements OnInit {
   public timer: any = 0;
   public keepDefaultMessage: boolean = true;
 
-  constructor(private readonly _dialog: MatDialog, private readonly _trainingService: TrainingService) { }
+  constructor(
+    private readonly _dialog: MatDialog,
+    private readonly _trainingService: TrainingService
+  ) { }
 
   public onStop(): void {
     clearInterval(this.timer);

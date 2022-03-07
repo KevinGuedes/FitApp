@@ -1,9 +1,9 @@
 <section class="past-trainings" fxLayout="column">
-    <div class="spinner" fxFlex fxLayoutAlign="center" *ngIf="isLoading">
+    <div class="spinner" fxFlex fxLayoutAlign="center" *ngIf="isLoading$ | async">
         <mat-spinner></mat-spinner>
     </div>
 
-    <div *ngIf="!isLoading && isTableDataAvailable">
+    <div *ngIf="!(isLoading$ | async) && isTableDataAvailable">
         <div fxLayoutAlign="center center">
             <mat-form-field appearance="standard" fxFlex="40%">
                 <mat-label>Filter</mat-label>
@@ -46,7 +46,7 @@
         </div>
     </div>
 
-    <div *ngIf="!isLoading && !isTableDataAvailable" class="fetch-again" fxLayoutAlign="center">
+    <div *ngIf="!(isLoading$ | async) && !isTableDataAvailable" class="fetch-again" fxLayoutAlign="center">
         <button type="button" mat-raised-button color="accent" (click)="fetchCompletedOrCancelledExercises()">Fetch Again</button>
     </div>
 </section>
