@@ -1,7 +1,7 @@
 import { createReducer, on } from "@ngrx/store";
 import * as UiActions from './ui.actions';
 
-export const uiKey: string = 'ui';
+export const uiKey = 'ui';
 
 export interface UiState {
     isLoading: boolean;
@@ -19,4 +19,4 @@ export const uiReducer = createReducer(
     //so, { isLoading: false } is the complete UiState
 );
 
-export const selectIsLoading = (state: UiState) => state.isLoading
+export const selectIsLoading = (state: UiState) => state.isLoading;

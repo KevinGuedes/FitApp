@@ -8,6 +8,7 @@ import { UiService } from '../shared/ui.service';
 import { Store } from '@ngrx/store';
 import * as fromRoot from './../state/app/app.reducer';
 import * as fromUiActions from './../state/ui/ui.actions';
+import * as fromAuthActions from './../state/auth/auth.actions';
 
 @Injectable({
   providedIn: 'root' //Visible to all components in the app. With this, it is not necessary to add the service in providers array on app.module.ts
@@ -15,7 +16,6 @@ import * as fromUiActions from './../state/ui/ui.actions';
 export class AuthService {
 
   public authChange: Subject<boolean> = new Subject<boolean>();
-  private _isAuthenticated: boolean = false;
 
   constructor(
     private readonly _router: Router,
@@ -29,15 +29,13 @@ export class AuthService {
   public initAuthListener(): void {
     onAuthStateChanged(this._firebaseAuth, (user: User | null) => {
       if (Boolean(user)) {
-        this._isAuthenticated = true;
-        this.authChange.next(true);
+        this._store.dispatch(fromAuthActions.setAuthtenticated());
         this._zone.run(() => {
           this._router.navigate(['/training']);
         });
       } else {
         this._trainingService.cancelSubscriptions();
-        this._isAuthenticated = false;
-        this.authChange.next(false);
+        this._store.dispatch(fromAuthActions.setAuthtenticated());
         this._zone.run(() => {
           this._router.navigate(['/login']);
         });
@@ -76,10 +74,6 @@ export class AuthService {
   public logout(): void {
     signOut(this._firebaseAuth);
     //this._firebaseAuth.signOut();
-  }
-
-  public isAuthenticated(): boolean {
-    return this._isAuthenticated; //doesn't solve the problem, everyone can send a boolean
   }
 
   private authErrorHandler(error: any): void {
