@@ -35,7 +35,7 @@ export class AuthService {
         });
       } else {
         this._trainingService.cancelSubscriptions();
-        this._store.dispatch(fromAuthActions.setAuthtenticated());
+        this._store.dispatch(fromAuthActions.setUnauthenticated());
         this._zone.run(() => {
           this._router.navigate(['/login']);
         });
