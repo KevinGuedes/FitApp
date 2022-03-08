@@ -19,6 +19,7 @@ import { AuthService } from './auth/auth-service.service';
 import { TrainingService } from './training/training.service';
 
 import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { appReducers } from './state/app/app.reducer';
 
 @NgModule({
@@ -38,6 +39,11 @@ import { appReducers } from './state/app/app.reducer';
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
     StoreModule.forRoot(appReducers),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production,
+      autoPause: false,
+    }),
   ],
   providers: [AuthService, TrainingService], //Ensure that in the entire app, there is only one instance of AuthService. Just if there is not providedIn root on the service
   bootstrap: [AppComponent]
