@@ -9,6 +9,7 @@ import { finishedExercisesConverter, availableExercisesConverter } from './train
 import { Store } from '@ngrx/store';
 import * as fromRoot from './../state/app/app.reducer';
 import * as fromUiActions from './../state/ui/ui.actions';
+import * as fromTrainingActions from './../state/training/training.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -39,8 +40,9 @@ export class TrainingService {
       collectionData(collection(this._firestore, this._availableExercisesCollectionName).withConverter(availableExercisesConverter))
         .subscribe({
           next: (exercises: Exercise[]) => {
-            this._availableExercises = exercises;
-            this.availableExerciseChanged.next(this._availableExercises.slice()); //copy
+            // this._availableExercises = exercises;
+            // this.availableExerciseChanged.next(this._availableExercises.slice()); //copy
+            this._store.dispatch(fromTrainingActions.setAvailableExercises({ availableExercises: exercises }));
             this._store.dispatch(fromUiActions.stopLoading());
           },
           error: (error: any) => { 

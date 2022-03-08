@@ -7,7 +7,6 @@ import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as fromRoot from '../../state/app/app.reducer';
 import * as fromUiSelectors from '../../state/ui/ui.selectors';
-
 @Component({
   selector: 'fit-new-training',
   templateUrl: './new-training.component.html',
