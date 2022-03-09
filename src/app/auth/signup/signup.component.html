@@ -56,7 +56,7 @@
         </mat-checkbox>
         <!-- Checbox doesn't require a mat-form-field wrap -->
 
-        <mat-spinner *ngIf="isLoading; else submitButton"></mat-spinner>
+        <mat-spinner *ngIf="(isLoading$ | async); else submitButton"></mat-spinner>
         <ng-template #submitButton>
             <button type="submit" mat-raised-button color="primary" [disabled]="signupForm.invalid">Submit</button>
         </ng-template>

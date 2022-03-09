@@ -1,4 +1,4 @@
-<mat-tab-group mat-align-tabs="center" *ngIf="!ongoingTraining; else currentTraining">
+<mat-tab-group mat-align-tabs="center" *ngIf="!(ongoingTraining$ | async); else currentTraining">
     <mat-tab label="New Training">
         <fit-new-training></fit-new-training>
     </mat-tab>
@@ -9,5 +9,5 @@
 </mat-tab-group>
 
 <ng-template #currentTraining>
-    <fit-current-training (trainingExit)="ongoingTraining = false"></fit-current-training>
+    <fit-current-training></fit-current-training>
 </ng-template>

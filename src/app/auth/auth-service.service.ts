@@ -5,6 +5,10 @@ import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, User } from '@angular/fire/auth';
 import { UiService } from '../shared/ui.service';
+import { Store } from '@ngrx/store';
+import * as fromRoot from './../state/app/app.reducer';
+import * as fromUiActions from './../state/ui/ui.actions';
+import * as fromAuthActions from './../state/auth/auth.actions';
 
 @Injectable({
   providedIn: 'root' //Visible to all components in the app. With this, it is not necessary to add the service in providers array on app.module.ts
@@ -12,7 +16,6 @@ import { UiService } from '../shared/ui.service';
 export class AuthService {
 
   public authChange: Subject<boolean> = new Subject<boolean>();
-  private _isAuthenticated: boolean = false;
 
   constructor(
     private readonly _router: Router,
@@ -20,20 +23,19 @@ export class AuthService {
     private readonly _trainingService: TrainingService,
     private readonly _zone: NgZone,
     private readonly _uiService: UiService,
+    private readonly _store: Store<fromRoot.AppState> //AppState merges the feature States with itself
   ) { }
 
   public initAuthListener(): void {
     onAuthStateChanged(this._firebaseAuth, (user: User | null) => {
       if (Boolean(user)) {
-        this._isAuthenticated = true;
-        this.authChange.next(true);
+        this._store.dispatch(fromAuthActions.setAuthtenticated());
         this._zone.run(() => {
           this._router.navigate(['/training']);
         });
       } else {
         this._trainingService.cancelSubscriptions();
-        this._isAuthenticated = false;
-        this.authChange.next(false);
+        this._store.dispatch(fromAuthActions.setUnauthenticated());
         this._zone.run(() => {
           this._router.navigate(['/login']);
         });
@@ -42,29 +44,29 @@ export class AuthService {
   }
 
   public registerUser(authData: AuthData): void {
-    this._uiService.loadingStateChanged.next(true);
+    this._store.dispatch(fromUiActions.startLoading());
 
     createUserWithEmailAndPassword(this._firebaseAuth, authData.email, authData.password)
       .then((_) => {
-        this._uiService.loadingStateChanged.next(false);
+        this._store.dispatch(fromUiActions.stopLoading());
       })
       .catch((error: any) => {
-        this._uiService.loadingStateChanged.next(false);
+        this._store.dispatch(fromUiActions.stopLoading());
         this.authErrorHandler(error)
       });
   }
 
   public login(authData: AuthData): void {
-    this._uiService.loadingStateChanged.next(true);
+    this._store.dispatch(fromUiActions.startLoading());
 
     //* Login and Create User actions adds the user token and other info in the session storage
-    //* The data is send on the request to firestore and that why we can access the database, even with the auth rules configured on the firebase project 
+    //* The data is send on the request to firestore and thats why we can access the database, even with the auth rules configured on the firebase project 
     signInWithEmailAndPassword(this._firebaseAuth, authData.email, authData.password)
       .then((_) => {
-        this._uiService.loadingStateChanged.next(false);
+        this._store.dispatch(fromUiActions.stopLoading());
       })
       .catch((error: any) => {
-        this._uiService.loadingStateChanged.next(false);
+        this._store.dispatch(fromUiActions.stopLoading());
         this.authErrorHandler(error)
       });
   }
@@ -72,10 +74,6 @@ export class AuthService {
   public logout(): void {
     signOut(this._firebaseAuth);
     //this._firebaseAuth.signOut();
-  }
-
-  public isAuthenticated(): boolean {
-    return this._isAuthenticated; //doesn't solve the problem, everyone can send a boolean
   }
 
   private authErrorHandler(error: any): void {
