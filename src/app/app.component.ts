@@ -1,5 +1,5 @@
 import { AuthService } from 'src/app/auth/auth-service.service';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'fit-root',
@@ -7,7 +7,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-
   private _title: string = 'FitApp';
   private _madeBy: string = 'Kevin Guedes';
 
