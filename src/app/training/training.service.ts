@@ -1,6 +1,6 @@
 import { UiService } from './../shared/ui.service';
 import { collection, collectionData, doc, Firestore, increment } from '@angular/fire/firestore';
-import { pipe, Subject, Subscription, take } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Exercise } from './exercise.interface';
 import { setDoc, updateDoc } from 'firebase/firestore';
