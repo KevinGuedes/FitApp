@@ -12,6 +12,6 @@ export const setFinishedExercises = createAction(
 
 export const startTraining = createAction(
     '[Training] Start Training',
-    props<{ exercisesToBeStarted: Exercise }>()
+    props<{ exerciseId: string }>()
 );
 export const stopTraining = createAction('[Training] Stop Training');

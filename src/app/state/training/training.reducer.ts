@@ -32,22 +32,22 @@ export const trainingReducer = createReducer(
         (state: TrainingSate, { finishedExercises }) => (
             {
                 ...state,
-                availableExercises: finishedExercises
+                finishedExercises: finishedExercises
             }
         )
     ),
     on(
         TrainingActions.startTraining,
-        (state: TrainingSate, { exercisesToBeStarted }) => (
+        (state: TrainingSate, { exerciseId }) => (
             {
                 ...state,
-                activeTraining: exercisesToBeStarted
+                activeTraining: { ...state.availableExercises.find(ex => ex.id == exerciseId)! }
             }
         )
     ),
     on(
         TrainingActions.stopTraining,
-        (state: TrainingSate,) => (
+        (state: TrainingSate) => (
             {
                 ...state,
                 activeTraining: null
@@ -59,3 +59,4 @@ export const trainingReducer = createReducer(
 export const selectAvailableTrainings = (state: TrainingSate) => state.availableExercises;
 export const selectFinishedTrainings = (state: TrainingSate) => state.finishedExercises;
 export const selectActiveTraining = (state: TrainingSate) => state.activeTraining;
+export const selectIsTraining = (state: TrainingSate) => state.activeTraining != null;
