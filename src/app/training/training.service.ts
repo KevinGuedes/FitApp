@@ -17,10 +17,6 @@ import * as fromTrainingSelectors from './../state/training/training.selectors';
 })
 export class TrainingService {
 
-  public exerciseChanged: Subject<Exercise | null> = new Subject<Exercise | null>();
-  public availableExerciseChanged: Subject<Exercise[]> = new Subject<Exercise[]>();
-  public finishedExercisesChanged: Subject<Exercise[]> = new Subject<Exercise[]>();
-
   private _finishedExercisesCollectionName: string = environment.firebase.finishedExercisesCollectionName;
   private _availableExercisesCollectionName: string = environment.firebase.availableExercisesCollectionName;
   private _firebaseSubscriptions: Subscription[] = [];
@@ -45,7 +41,6 @@ export class TrainingService {
           },
           error: (error: any) => { 
             this.errorHandler(error);
-            this.availableExerciseChanged.next([]);
             this._store.dispatch(fromUiActions.stopLoading());
           }
         })
@@ -70,7 +65,6 @@ export class TrainingService {
           },
           error: (error: any) => {
             this.errorHandler(error);
-            this.finishedExercisesChanged.next([]);
             this._store.dispatch(fromUiActions.stopLoading());
           }
         }

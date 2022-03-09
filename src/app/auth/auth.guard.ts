@@ -13,8 +13,6 @@ import * as fromAuthSelectors from './../state/auth/auth.selectors';
 //guard only runs once
 export class AuthGuard implements CanActivate, CanLoad {
     constructor(
-        private readonly _authService: AuthService,
-        private readonly _router: Router,
         private readonly _store: Store<fromRoot.AppState>
     ) { }
 
